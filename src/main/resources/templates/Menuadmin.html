@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Formulario de Registro</title>
+    <link rel="stylesheet" th:href="@{/estilos.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="border p-4 bg-light">
+<!-- Mensajes de confirmación y error -->
+<div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}" id="mensaje"></div>
+<div th:if="${error}" class="alert alert-danger" th:text="${error}" id="error"></div>
+
+<!-- Barra de navegación -->
+<nav class="sidebar">
+    <ul>
+        <li>
+            <a href="#" class="logo">
+                <img th:src="@{/logo.png}" alt="Logo">
+                <span class="nav-item">Administrador</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="mostrarSeccion('menuPrincipal')">
+                <i class="fas fa-home"></i>
+                <span class="nav-item">Menu Principal</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="mostrarSeccion('List')">
+                <i class="fas fa-users"></i>
+                <span class="nav-item">Listado Entrenadores</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" onclick="mostrarSeccion('form-register')">
+                <i class="fas fa-user-plus"></i>
+                <span class="nav-item">Registros</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="nav-item">Calendario</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/logout}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-item">Cerrar sesión</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+<!-- Formulario de edición -->
+<section id="form-edit" class="form-edit" style="display: none;" th:if="${entrenador != null}">
+    <h2>Editar Entrenador</h2>
+    <form th:action="@{/editar/{cedula}(cedula=${entrenador.cedula})}" th:object="${entrenador}" method="post">
+        <input class="controls" type="text" th:field="*{cedula}" readonly>
+        <input class="controls" type="text" th:field="*{nombre}" placeholder="Ingrese el nombre del Entrenador" required>
+        <input class="controls" type="text" th:field="*{contacto}" placeholder="Ingrese el contacto del Entrenador" required>
+        <input class="controls" type="text" th:field="*{usuario}" placeholder="Ingrese el usuario del Entrenador" required>
+        <input class="controls" type="password" th:field="*{contrasena}" placeholder="Ingrese la nueva contraseña (opcional)">
+        <button class="botons" type="submit">Guardar Cambios</button>
+        <button class="botons cancel-button" type="button" onclick="cerrarFormularioEditar()">Cancelar</button>
+    </form>
+</section>
+<!-- Listado de entrenadores -->
+<section id="List" class="List" style="display: none;">
+    <h2>Listado de Entrenadores</h2>
+    <div class="content-container">
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Contacto</th>
+                <th>Usuario</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Iteración sobre los entrenadores -->
+            <tr th:each="entrenador : ${entrenadores}">
+                <td th:text="${entrenador.cedula}"></td>
+                <td th:text="${entrenador.nombre}"></td>
+                <td th:text="${entrenador.contacto}"></td>
+                <td th:text="${entrenador.usuario}"></td>
+                <td>
+                    <a href="#" th:onclick="'mostrarFormularioEditar(' + \'' + ${entrenador.cedula} + '\' + ')'"
+                       th:href="@{/editar/{cedula}(cedula=${entrenador.cedula})}">Editar</a>
+                    <a th:href="@{/eliminar/{cedula}(cedula=${entrenador.cedula})}"
+                       onclick="return confirm('¿Estás seguro de que deseas eliminar este entrenador?')">Eliminar</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+<!-- Formulario de registro -->
+    <section id="form-register" class="form-register" style="display: none;">
+        <h2>Formulario de Registro de Entrenador</h2>
+        <form th:action="@{/registrarEntrenador}" method="post">
+            <input class="controls" type="text" name="cedula" placeholder="Ingrese la cédula del Entrenador" required>
+            <input class="controls" type="text" name="nombre" placeholder="Ingrese el nombre del Entrenador" required>
+            <input class="controls" type="text" name="contacto" placeholder="Ingrese el contacto del Entrenador" required>
+            <input class="controls" type="text" name="usuario" placeholder="Ingrese el usuario del Entrenador" required>
+            <input class="controls" type="password" name="contrasena" placeholder="Ingrese la contraseña del Entrenador" required>
+            <button class="botons" type="submit">Registrar</button>
+        </form>
+    </section>
+
+
+
+
+
+<!-- Scripts -->
+<script>
+    //Mostrar el formulario para editar los datos de los entrenadores
+    function mostrarFormularioEditar(cedula) {
+        // Muestra el formulario de edición y oculta los demás
+        document.getElementById('form-edit').style.display = 'block';
+        document.getElementById('form-register').style.display = 'none'; // Oculta el formulario de registro
+        document.getElementById('List').style.display = 'none'; // Oculta el listado
+
+        // Aquí puedes cargar dinámicamente los datos en el formulario si lo necesitas.
+        console.log("Cargando formulario de edición para cédula:", cedula);
+    }
+
+
+    function cerrarFormularioEditar() {
+        // Cerrar el formulario de edición y mostrar el listado
+        document.getElementById('form-edit').style.display = 'none';
+        document.getElementById('List').style.display = 'block';
+    }
+
+    // Ocultar mensajes automáticamente después de 5 segundos
+    function ocultarMensajes() {
+        setTimeout(function() {
+            var mensaje = document.getElementById("mensaje");
+            var error = document.getElementById("error");
+            if (mensaje) mensaje.style.display = "none";
+            if (error) error.style.display = "none";
+        }, 5000);
+    }
+
+    // Mostrar secciones dinámicamente
+    function mostrarSeccion(id) {
+        var secciones = ['List', 'form-register'];
+        secciones.forEach(function(seccion) {
+            var element = document.getElementById(seccion);
+            element.style.display = (seccion === id) ? "block" : "none";
+        });
+    }
+
+
+    // Llamar a la función para ocultar los mensajes al cargar la página
+    window.onload = function() {
+        ocultarMensajes();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Título de la Página</title>
+
+    <link rel="stylesheet" th:href="@{/estilos.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="border p-4 bg-light">
+<!-- Mensaje de confirmación -->
+<div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<nav>
+    <ul>
+        <li>
+            <a href="#"  class="logo">
+                <img th:src="@{/logo.png}" alt="" >
+                <span class="nav-item">Entrenador</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fas fa-home"></i>
+                <span class="nav-item">Menu Principal</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fas fa-list"></i>
+                <span class="nav-item">Lista Alumnos</span>
+            </a>
+        </li>
+        <li>
+            <a a href="#" onclick="mostrarFormularioRegistro()">
+                <i class="fas fa-clipboard"></i>
+                <span class="nav-item">Registro alumnos</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fas fa-clipboard-list"></i>
+                <span class="nav-item">Registro representantes</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="nav-item">Calendario</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-item">Cerrar sesión</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+<!-- Formulario de registro -->
+<section id="form-register" class="form-register" style="display: none;">
+    <h4>Formulario de Registro de Alumno</h4>
+    <form th:action="@{/registrarAlumno}" method="post">
+        <input class="controls" type="number" name="AlumnoID" placeholder="Ingrese el Documento del Alumno" required>
+        <input class="controls" type="text" name="nombre" placeholder="Ingrese el nombre del Alumno" required>
+        <input class="controls" type="date" name="Fecha_nac" placeholder="Ingrese la fecha de nacimiento" required>
+        <input class="controls" type="number" name="altura" placeholder="Ingrese la altura del Alumno (en cm)" required>
+        <input class="controls" type="text" name="Historial_med" placeholder="Ingrese el historial médico del Alumno" required>
+        <input class="controls" type="number" name="peso" placeholder="Ingrese el peso del Alumno (en kg)"  required>
+        <input class="controls" type="text" name="posición_juego" placeholder="Ingrese la posición de juego del Alumno" required>
+        <input class="botons" type="submit" value="Registrar Alumno">
+    </form>
+</section>
+</body>
+<script>
+    function ocultarMensajes() {
+        setTimeout(function() {
+            var mensaje = document.getElementById("mensaje");
+            var error = document.getElementById("error");
+            if (mensaje) mensaje.style.display = "none";
+            if (error) error.style.display = "none";
+        }, 5000); // Los mensajes desaparecerán después de 5 segundos
+    }
+
+    // Llamar a la función para ocultar los mensajes si existen
+    window.onload = function() {
+        ocultarMensajes();
+    };
+    function mostrarFormularioRegistro() {
+        var form = document.getElementById("form-register");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+</script>
+</html>
